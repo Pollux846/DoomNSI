@@ -22,7 +22,7 @@ class Mur:
         self.dessin = {}
     def tracer(self):
         # le mur comme un segment
-        self.dessin['mur'] = pg.shapes.Line(self.x1,self.y1,self.x2,self.y2, width=3, batch=self.batch)
+        self.dessin['mur'] = pg.shapes.Line(self.x1,self.y1,self.x2,self.y2, batch=self.batch)
     def afficher(self):
         self.batch.draw()
     def debug(self):
