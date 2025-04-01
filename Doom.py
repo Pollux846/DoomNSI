@@ -20,7 +20,8 @@ joueur = J.Joueur(250.1,250.1,0)
 
 # Création d'instances de Mur
 murs = [S.Mur(400,100,800,100), S.Mur(800,100,1000,300), S.Mur(1000,300,1000,500), S.Mur(800,700,1000,500),
-        S.Mur(400,700,800,700), S.Mur(200,500,400,700), S.Mur(200,300,200,500), S.Mur(200,300,400,100)]
+        S.Mur(400,700,800,700), S.Mur(200,500,400,700), S.Mur(200,300,200,500), S.Mur(200,300,400,100), S.Mur(500,300,550,300), 
+        S.Mur(550,300,550,350), S.Mur(550,350,500,350), S.Mur(500,350,500,300)]
 window2d.switch_to()
 [mur.debug() for mur in murs]
 [mur.tracer() for mur in murs]
