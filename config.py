@@ -32,4 +32,4 @@ class JOUEUR():
 # CONSTANTES RELATIVES AU MOTEUR
 class MOTEUR():
 	# taux de rafraîchissement des mises à jour
-	FPS = 1/30.
+	FPS = 1/30.0

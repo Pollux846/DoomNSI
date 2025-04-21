@@ -96,7 +96,7 @@ def update(dt):
     tracer()
 
 # boucle principale (30 Hz)
-pg.clock.schedule_interval(update, 1/30.0)
+pg.clock.schedule_interval(update, interval=C.MOTEUR().FPS)
 
 # version de pyglet
 print("Version de Pyglet : ",pg.version)
