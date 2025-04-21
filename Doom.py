@@ -12,16 +12,16 @@ import rendu3D as R
 
 # création de la fenêtre pour le plan 2D et le rendu 3D
 # résolution : 320x200 pour le Doom de l'époque
-window3d = pg.window.Window(800, 600, "Plan 3D", vsync=C.AFFICHAGE().V_SYNC)
-window2d = pg.window.Window(800, 600, "Plan 2D", vsync=C.AFFICHAGE().V_SYNC)
+window3d = pg.window.Window(1100, 800, "Plan 3D", vsync=C.AFFICHAGE().V_SYNC)
+window2d = pg.window.Window(1100, 800, "Plan 2D", vsync=C.AFFICHAGE().V_SYNC)
 
 # Création d'une instance de Joueur
 joueur = J.Joueur(250.1,250.1,0)
 
 # Création d'instances de Mur
-murs = [S.Mur(400,100,800,100), S.Mur(800,100,1000,300), S.Mur(1000,300,1000,500), S.Mur(800,700,1000,500),
-        S.Mur(400,700,800,700), S.Mur(200,500,400,700), S.Mur(200,300,200,500), S.Mur(200,300,400,100), S.Mur(500,300,550,300), 
-        S.Mur(550,300,550,350), S.Mur(550,350,500,350), S.Mur(500,350,500,300)]
+murs = [S.Mur(400,100,800,100, (4, 135, 211)), S.Mur(800,100,1000,300, (3, 112, 175)), S.Mur(1000,300,1000,500, (2, 91, 142)), S.Mur(800,700,1000,500, (1, 56, 88)),
+        S.Mur(400,700,800,700, (0, 100, 255)), S.Mur(200,500,400,700, (1, 83, 209)), S.Mur(200,300,200,500, (0, 60, 152)), S.Mur(200,300,400,100, (0, 39, 98)), S.Mur(500,300,550,300, (0, 19, 48)), 
+        S.Mur(550,300,550,350, (84, 66, 255)), S.Mur(550,350,500,350, (73, 62, 179)), S.Mur(500,350,500,300, (44, 38, 99))]
 window2d.switch_to()
 [mur.debug() for mur in murs]
 [mur.tracer() for mur in murs]

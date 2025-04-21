@@ -5,7 +5,8 @@ from outils import *
 from math import sqrt
 
 class Mur:
-    def __init__(self, xA, yA, xB, yB):
+    def __init__(self, xA, yA, xB, yB, color):
+        self.color = color
         # un mur est un segment 2D entre deux points
         self.x1, self.y1 = xA, yA
         self.x2, self.y2 = xB, yB
