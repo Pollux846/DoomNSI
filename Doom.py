@@ -9,7 +9,7 @@ import config as C
 import joueur as J
 import structure as S
 import rendu3D as R
-import carte as C
+import carte as CA
 
 # création de la fenêtre pour le plan 2D et le rendu 3D
 # résolution : 320x200 pour le Doom de l'époque
@@ -20,7 +20,7 @@ window2d = pg.window.Window(1100, 800, "Plan 2D", vsync=C.AFFICHAGE().V_SYNC)
 joueur = J.Joueur(300,250.1,0)
 
 # Création d'instances de Mur
-map = 
+map = CA.CARTE.CARTE_1
 
 arbreBSP = S.BSPnoeud(map)
 arbreBSP.partitionage(profondeur=1000)

@@ -20,6 +20,6 @@ map1 = pilier1 + pilier2 + pilier3 + pilier4 + pilier5 + pilier6 + pilier7 + pie
 map2 = pilier0 + piece
 
 
-class Carte:
-    Carte_1 = map1
-    Carte_2 = map2
+class CARTE:
+    CARTE_1 = map1
+    CARTE_2 = map2
