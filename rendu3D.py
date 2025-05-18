@@ -46,7 +46,7 @@ class rendu_3d():
         indice.append(segment.id)
 
     def calc_rendu3d(self, BSP, indice, quads):
-        H_SOL, H_PLAF = 0, 100
+        H_SOL, H_PLAF = -50, 60
         # reset
         self.quads = quads
 
