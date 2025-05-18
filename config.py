@@ -18,7 +18,8 @@ class AFFICHAGE():
 	# Synchronisation du rafraîchissement d'écran
 	V_SYNC = True
 	# Distance à l'écran virtuel de projection
-	D_Z = 500.
+	D_Z = 500
+	V_S = (0.4, 0)
 
 # CONSTANTES RELATIVES AU JOUEUR
 class JOUEUR():
@@ -33,3 +34,13 @@ class JOUEUR():
 class MOTEUR():
 	# taux de rafraîchissement des mises à jour
 	FPS = 1/30.0
+	
+class COULEUR():
+	BLEU = (59, 156, 198)
+	ROUGE = (222, 31, 31)
+	ORANGE = (254, 127, 1)
+	VIOLET = (171, 11, 218)
+	VERT = (15, 126, 29)
+	ROSE = (238, 119, 236)
+	CYAN = (60, 240, 240)
+	JAUNE = (254, 254, 1)

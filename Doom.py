@@ -9,6 +9,7 @@ import config as C
 import joueur as J
 import structure as S
 import rendu3D as R
+import carte as C
 
 # création de la fenêtre pour le plan 2D et le rendu 3D
 # résolution : 320x200 pour le Doom de l'époque
@@ -16,15 +17,20 @@ window3d = pg.window.Window(1100, 800, "Plan 3D", vsync=C.AFFICHAGE().V_SYNC)
 window2d = pg.window.Window(1100, 800, "Plan 2D", vsync=C.AFFICHAGE().V_SYNC)
 
 # Création d'une instance de Joueur
-joueur = J.Joueur(250.1,250.1,0)
+joueur = J.Joueur(300,250.1,0)
 
 # Création d'instances de Mur
-murs = [S.Mur(400,100,800,100, (4, 135, 211)), S.Mur(800,100,1000,300, (3, 112, 175)), S.Mur(1000,300,1000,500, (2, 91, 142)), S.Mur(800,700,1000,500, (1, 56, 88)),
-        S.Mur(400,700,800,700, (0, 100, 255)), S.Mur(200,500,400,700, (1, 83, 209)), S.Mur(200,300,200,500, (0, 60, 152)), S.Mur(200,300,400,100, (0, 39, 98)), S.Mur(500,300,550,300, (0, 19, 48)), 
-        S.Mur(550,300,550,350, (84, 66, 255)), S.Mur(550,350,500,350, (73, 62, 179)), S.Mur(500,350,500,300, (44, 38, 99))]
+map = 
+
+arbreBSP = S.BSPnoeud(map)
+arbreBSP.partitionage(profondeur=1000)
+print("")
+arbreBSP.afficher_arbre()
+print("")
+
 window2d.switch_to()
-[mur.debug() for mur in murs]
-[mur.tracer() for mur in murs]
+[mur.debug() for mur in map]
+[mur.tracer() for mur in map]
 
 # Création d'une instance du rendu 3D
 rendu_3d = R.rendu_3d(joueur)
@@ -67,7 +73,7 @@ def on_key_release(symbol, modifiers):
 @window2d.event
 def on_draw():
     window2d.clear()
-    [mur.afficher() for mur in murs]
+    [mur.afficher() for mur in map]
     joueur.afficher()
     
 @window3d.event
@@ -85,14 +91,14 @@ def tracer():
 # boucle principale
 def update(dt):
     # actions du joueur
-    if actions['avancer']: joueur.avancer(joueur.PAS, joueur.a, murs)
-    if actions['reculer']: joueur.avancer(-joueur.PAS, joueur.a, murs)
-    if actions['gauche']: joueur.avancer(joueur.PAS, joueur.a+pi/2, murs)
-    if actions['droite']: joueur.avancer(-joueur.PAS, joueur.a+pi/2, murs)
+    if actions['avancer']: joueur.avancer(joueur.PAS, joueur.a, map)
+    if actions['reculer']: joueur.avancer(-joueur.PAS, joueur.a, map)
+    if actions['gauche']: joueur.avancer(joueur.PAS, joueur.a+pi/2, map)
+    if actions['droite']: joueur.avancer(-joueur.PAS, joueur.a+pi/2, map)
     if actions['tourner_gauche']: joueur.tourner(joueur.ROT)
     if actions['tourner_droite']: joueur.tourner(-joueur.ROT)
     # rendu 3D
-    rendu_3d.calc_rendu3d(murs)
+    rendu_3d.calc_rendu3d(arbreBSP, [], [])
     tracer()
 
 # boucle principale (30 Hz)
