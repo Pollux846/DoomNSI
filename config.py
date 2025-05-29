@@ -3,6 +3,7 @@
 # -> une classe par catégorie pour ne pas tout mélanger
 
 import pyglet.window.key as keys
+from math import tan, radians
 
 # CONSTANTES RELATIVES A L'INTERFACE
 class INTERFACE():
@@ -12,23 +13,29 @@ class INTERFACE():
 # CONSTANTES RELATIVES A L'AFFICHAGE
 class AFFICHAGE():
 	# résolution
-	X_RES, Y_RES = 640, 480
+	X_RES, Y_RES = 1100, 800
 	# coordonnées du centre
 	DX_RES, DY_RES = X_RES//2, Y_RES//2
 	# Synchronisation du rafraîchissement d'écran
 	V_SYNC = True
 	# Distance à l'écran virtuel de projection
-	D_Z = 500
+	ANGLE_VISION = radians(80)
+	D_A = ANGLE_VISION/2
+	D_Z = (X_RES/2)/tan(ANGLE_VISION/2)
 	V_S = (0.4, 0)
 
 # CONSTANTES RELATIVES AU JOUEUR
 class JOUEUR():
 	# vitesses de translation et rotation
-	PAS, ROT = 10.0, 0.2
+	PAS = 10.0
+	ROT = 0.2
 	# touches pour déplacement
-	T_AVANCER, T_RECULER = [keys.UP, keys.Z], [keys.DOWN, keys.S]
-	T_TOURNER_G, T_TOURNER_D = [keys.LEFT], [keys.RIGHT]
-	T_STRAFE_G, T_STRAFE_D = [keys.Q], [keys.D]
+	T_AVANCER = [keys.UP, keys.Z]
+	T_RECULER = [keys.DOWN, keys.S]
+	T_TOURNER_G = [keys.LEFT]
+	T_TOURNER_D = [keys.RIGHT]
+	T_STRAFE_G = [keys.Q]
+	T_STRAFE_D = [keys.D]
 
 # CONSTANTES RELATIVES AU MOTEUR
 class MOTEUR():

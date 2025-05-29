@@ -1,29 +1,29 @@
-# Séance 4 du 13/02/2024
-# création du module joueur
-
-# module pyglet principal (qu'on nenomme en pg pour plus de simplicité)
 import pyglet as pg
-# import des fonctions trigo du module math
 from math import *
 from outils import *
-# import de la config par défaut
 import config as C
 
-class Joueur: # la classe Joueur
+class Joueur:
     def __init__(self, x, y, a):
         # position et angle
         self.x = x
         self.y = y
         self.a = a
         # Deltas de déplacement et rotation
-        self.PAS = C.JOUEUR().PAS
-        self.ROT = C.JOUEUR().ROT
-        # Vecteur unitaire de visée
-        self.V = (cos(self.a), sin(self.a))
+        self.PAS = C.JOUEUR.PAS
+        self.ROT = C.JOUEUR.ROT
+        # Vecteurs unitaires de visée
+        self.calc_V()
         # "batch" du joueur
-        self.dessin = Dessin()
+        self.dessin1 = Dessin()
+        self.dessin2 = Dessin()
         # Booléen de déplacement
         self.deplacement = True
+        
+    def calc_V(self):
+        self.V = (cos(self.a), sin(self.a))
+        self.VG = (cos(self.a+C.AFFICHAGE.D_A), sin(self.a+C.AFFICHAGE.D_A))
+        self.VD = (cos(self.a-C.AFFICHAGE.D_A), sin(self.a-C.AFFICHAGE.D_A))
     
     def position(self):
         return (self.x, self.y)
@@ -31,7 +31,9 @@ class Joueur: # la classe Joueur
     def avancer(self, pas, a, murs):
         x = self.x + pas*cos(a)
         y = self.y + pas*sin(a)
+        
         collision = self.test_collision(murs, (x,y))
+
         #collision mur
         if collision:
             # calculer la glissage
@@ -41,30 +43,49 @@ class Joueur: # la classe Joueur
             y = self.y + k*collision.u[1]
             # et retester la collision (peut être un coin !)
             collision = self.test_collision(murs, (x,y))
+
         if not collision: # aucune collision
             self.x, self.y = x, y
             self.deplacement = True
 
     def tourner(self, angle):
         self.a += angle
-        self.V = (cos(self.a), sin(self.a))
+        self.calc_V()
         self.deplacement = True
 
     # mémorise les tracés du joueur (batch)
-    def tracer(self):
-        self.dessin.reset()
-        dessins = [
+    def tracer(self, dessin=1):
+        if dessin == 1:
+            dessins = [
             # le joueur comme un cercle
-            pg.shapes.Circle(self.x, self.y, 10, color =(50, 225, 30), batch = self.dessin.batch),
+            pg.shapes.Circle(self.x, self.y, 10, color =(50, 225, 30), batch = self.dessin1.batch),
             # segment "vecteur vitesse" qui pointe vers la direction de visée
-            pg.shapes.Line(self.x, self.y, self.x + 20*cos(self.a), self.y + 20*sin(self.a), batch = self.dessin.batch)
+            pg.shapes.Line(self.x, self.y, self.x + 20*cos(self.a), self.y + 20*sin(self.a), batch = self.dessin1.batch),
+            pg.shapes.Line(self.x, self.y, self.x + 200*cos(self.a+C.AFFICHAGE.D_A), self.y + 200*sin(self.a+C.AFFICHAGE.D_A), color=(255, 0, 0), batch = self.dessin1.batch),
+            pg.shapes.Line(self.x, self.y, self.x + 200*cos(self.a-C.AFFICHAGE.D_A), self.y + 200*sin(self.a-C.AFFICHAGE.D_A), color=(255, 0, 0), batch = self.dessin1.batch)
         ]
-        self.dessin.ajout(dessins)
+            self.dessin1.reset()
+            self.dessin1.ajout(dessins)
+        else:
+            dessins = [
+            # le joueur comme un cercle
+            pg.shapes.Circle(self.x, self.y, 10, color =(50, 225, 30), batch = self.dessin2.batch),
+            # segment "vecteur vitesse" qui pointe vers la direction de visée
+            pg.shapes.Line(self.x, self.y, self.x + 20*cos(self.a), self.y + 20*sin(self.a), batch = self.dessin2.batch),
+            pg.shapes.Line(self.x, self.y, self.x + 200*cos(self.a+C.AFFICHAGE.D_A), self.y + 200*sin(self.a+C.AFFICHAGE.D_A), color=(255, 0, 0), batch = self.dessin2.batch),
+            pg.shapes.Line(self.x, self.y, self.x + 200*cos(self.a-C.AFFICHAGE.D_A), self.y + 200*sin(self.a-C.AFFICHAGE.D_A), color=(255, 0, 0), batch = self.dessin2.batch)
+        ]
+            self.dessin2.reset()
+            self.dessin2.ajout(dessins)
+
 
     
     # dessine le joueur (batch)
-    def afficher(self):
-        self.dessin.dessiner()
+    def afficher(self, dessin=1):
+        if dessin == 1:
+            self.dessin1.dessiner()
+        else:
+            self.dessin2.dessiner()
 
     # test de collision : renvoie le mur concerné (False sinon)       
     def test_collision(self, murs, P):
@@ -86,7 +107,6 @@ class Joueur: # la classe Joueur
             if test1 and test2:
                 # les segments ont une intersection : collision 
                 return mur
-        
         return False
                        
             

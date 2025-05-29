@@ -1,49 +1,58 @@
-# Module d'outils divers
-from turtle import position
 import pyglet as pg
+import random
 
-# produit vectoriel (coordonnée z)
+# Produit vectoriel (coordonnée z en 2D)
 def calc_PV(u, v):
     return u[0]*v[1]-u[1]*v[0]
 
-# produit scalaire
+# Produit scalaire
 def calc_PS(u, v):
     return u[0]*v[0] + u[1]*v[1]
 
-# vecteur entre 2 points
+# Vecteur entre 2 points
 def calc_AB(A, B):
     return (B[0] - A[0], B[1] - A[1])
 
-def intersection(A, B, C, D):
-    x1, y1 = A
-    x2, y2 = B
-    x3, y3 = C
-    x4, y4 = D
+def random_color():
+    return (random.randint(0, 255),
+            random.randint(0, 255),
+            random.randint(0, 255))
 
-    dx1 = x2 - x1
-    dy1 = y2 - y1
-    dx2 = x4 - x3
-    dy2 = y4 - y3
 
-    denom = dx1 * dy2 - dy1 * dx2
+def intersection(A, B, M, u, type=0):
 
-    t = ((x3 - x1) * dy2 - (y3 - y1) * dx2) / denom
+    AB = (B[0]-A[0], B[1]-A[1])
+    AM = (M[0]-A[0], M[1]-A[1])
+    denom = calc_PV(AB, u)
 
-    if 0 <= t <= 1:
-        inter_x = x1 + t * dx1
-        inter_y = y1 + t * dy1
-        return (inter_x, inter_y)
-    else:
+    if denom == 0:
         return None
+    
+    t = calc_PV(AM, u) / denom
+    s = calc_PV(AM, AB) / denom
+
+    if type == 0:
+        if 0 <= t <= 1:
+            return (A[0] + t * AB[0], A[1] + t * AB[1])
+    else:
+        if 0 <= t <= 1 and s >= 0:
+            return (A[0] + t * AB[0], A[1] + t * AB[1])
+    
+    return None
+
+
 
 # batch avec ses références
 class Dessin:
     def __init__(self):
         self.batch = pg.graphics.Batch()
         self.dessins = []
+
     def ajout(self, dessins):
         self.dessins.extend(dessins)
+
     def reset(self):
         self.dessins = []
+        
     def dessiner(self):
         self.batch.draw()

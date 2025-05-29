@@ -1,44 +1,63 @@
-# module pyglet principal (qu'on nenomme en pg pour plus de simplicité)
 import pyglet as pg
 import outils as O
-# outils mathématiques
 from math import sqrt
 
 class Mur:
-    def __init__(self, xA, yA, xB, yB, color, id):
+    def __init__(self, xA, yA, xB, yB, color, id, secteur):
+        self.secteur = secteur
         self.color = color
         self.id = id
-        # un mur est un segment 2D entre deux points
+        
+        # Coordonnées des extrémités du mur
         self.x1, self.y1 = xA, yA
         self.x2, self.y2 = xB, yB
         self.A = (self.x1, self.y1)
         self.B = (self.x2, self.y2)
-        # étendue du mur (coordonnées du vecteur AB)
+
+        # Etendue du mur (coordonnées du vecteur AB)
         self.dx = xB - xA
         self.dy = yB - yA
-        # longueur du mur
+
+        # Longueur du mur
         self.l = sqrt(self.dx**2+self.dy**2)
-        # vecteur directeur (unitaire)
+
+        # Vecteur directeur (unitaire)
         self.u = (self.dx/self.l, self.dy/self.l)
-        # vecteur orthogonal (unitaire)
+
+        # Vecteur normale (unitaire) (orthogonal)
         self.N = (self.u[1], -self.u[0])
-        # "batch" du mur
+
+        # Batch pour affichage Pyglet
         self.dessin = O.Dessin()
 
     def tracer(self):
-        # le mur comme un segment
-        self.dessin.ajout([pg.shapes.Line(self.x1,self.y1,self.x2,self.y2, batch=self.dessin.batch)])
-        self.dessin.ajout([pg.text.Label(str(self.id), self.x1 + self.dx//2, self.y1 + self.dy//2, color=(255, 255, 255, 255), batch=self.dessin.batch)])
+        # Affiche le mur comme un segment + son ID au milieu
+        self.dessin.ajout([pg.shapes.Line(self.x1, self.y1, self.x2, self.y2, color=O.random_color(), batch=self.dessin.batch)])
+        
+        self.dessin.ajout([
+            pg.text.Label(str(self.id),
+                          self.x1 + self.dx//2, 
+                          self.y1 + self.dy//2, 
+                          color=(255, 255, 255, 255), 
+                          font_name="Arial", 
+                          batch=self.dessin.batch)
+        ])
 
     def afficher(self):
         self.dessin.dessiner()
         
     def debug(self):
-        print("Mur ({},{})->({},{})".format(self.x1,self.y1,self.x2,self.y2))
-        print("-> longueur l :", self.l)
-        print("-> étendue dx et dy :",self.dx,",",self.dy)
-        print("-> vecteur directeur u :",self.u)
-        print("-> vecteur orthogonal N :",self.N)
+        print(f"Mur ({self.x1},{self.y1})->({self.x2},{self.y2})")
+        print(f"-> longueur : {self.l}")
+        print(f"-> direction : dx={self.dx}, dy={self.dy}")
+        print(f"-> vecteur directeur u : {self.u}")
+        print(f"-> normale N : {self.N}")
+
+class Secteur:
+    def __init__(self, murs, h_sol, h_plaf):
+        self.murs = murs
+        self.h_sol = h_sol
+        self.h_plaf = h_plaf
 
 
 class BSPnoeud:
@@ -54,9 +73,6 @@ class BSPnoeud:
 
         droite = []
         gauche = []
-    
-        p1 = (int(self.segment.x1 - 10000 * self.segment.u[0]), int(self.segment.y1 - 10000 * self.segment.u[1]))
-        p2 = (int(self.segment.x2 + 10000 * self.segment.u[0]), int(self.segment.y2 + 10000 * self.segment.u[1]))
 
         for mur in self.murs:
 
@@ -64,7 +80,7 @@ class BSPnoeud:
             t2 = O.calc_PV((self.segment.dx, self.segment.dy), (mur.x2 - self.segment.x2, mur.y2 - self.segment.y2))
 
             if t1 * t2 < 0:
-                p = O.intersection(mur.A, mur.B, self.segment.A, self.segment.B)
+                p = O.intersection(mur.A, mur.B, self.segment.A, self.segment.u, 0)
 
                 def PV_arrondi(a, b):
                     t = O.calc_PV(a, b)
@@ -78,14 +94,14 @@ class BSPnoeud:
 
                 # Attention, la droite est toujours dans le sens du vecteur normale du segment
                 if t3 > 0 or t4 > 0:
-                    gauche.append(Mur(mur.x1, mur.y1, p[0], p[1], mur.color, str(mur.id) + "g"))
+                    gauche.append(Mur(mur.x1, mur.y1, p[0], p[1], mur.color, str(mur.id) + "g", mur.secteur))
                 else:
-                    droite.append(Mur(mur.x1, mur.y1, p[0], p[1], mur.color, str(mur.id) + "d"))
+                    droite.append(Mur(mur.x1, mur.y1, p[0], p[1], mur.color, str(mur.id) + "d", mur.secteur))
 
                 if t5 > 0 or t6 > 0:
-                    gauche.append(Mur(p[0], p[1], mur.x2, mur.y2, mur.color, str(mur.id) + "g"))
+                    gauche.append(Mur(p[0], p[1], mur.x2, mur.y2, mur.color, str(mur.id) + "g", mur.secteur))
                 else:
-                    droite.append(Mur(p[0], p[1], mur.x2, mur.y2, mur.color, str(mur.id) + "d"))
+                    droite.append(Mur(p[0], p[1], mur.x2, mur.y2, mur.color, str(mur.id) + "d", mur.secteur))
 
             elif t1 > 0 or t2 > 0:
                 gauche.append(mur)
@@ -107,4 +123,12 @@ class BSPnoeud:
             self.droite.afficher_arbre(profondeur + 1)
         if self.gauche:
             self.gauche.afficher_arbre(profondeur + 1)
+
+    def liste_mur(self, liste=[]):
+        liste.append(self.segment)
+        if self.droite:
+            liste = self.droite.liste_mur(liste)
+        if self.gauche:
+            liste = self.gauche.liste_mur(liste)
+        return liste
         
