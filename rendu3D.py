@@ -35,6 +35,9 @@ class Rendu3D():
         return (X,Y)
 
     def rendu_segment(self, mur, indice, H_SOL, H_PLAF):
+        
+        if mur.is_portail:
+            return
 
         if calc_PS(self.joueur.VG, mur.N) > 0 and calc_PS(self.joueur.VD, mur.N) > 0:
             return
@@ -82,7 +85,7 @@ class Rendu3D():
             return
 
         var = calc_PS(mur.N, C.AFFICHAGE.V_S)
-        color = list(map(lambda x: min(255, int(x*(1+var))), mur.color))
+        color = list(map(lambda x: min(255, int(x*(1+var))), mur.secteur_gauche.color))
         self.quads.append((a,b,c,d, color))
         self.lignes.append((A, B))
         indice.append(mur.id)
@@ -95,7 +98,7 @@ class Rendu3D():
             return
 
         if BSP.droite == None and BSP.gauche == None:
-           self.rendu_segment(BSP.segment, indice, BSP.segment.secteur[0], BSP.segment.secteur[1])
+           self.rendu_segment(BSP.segment, indice, BSP.segment.secteur_gauche.sol, BSP.segment.secteur_gauche.plaf)
            return
         
         pv = calc_PV((BSP.segment.dx, BSP.segment.dy), (self.joueur.x - BSP.segment.x1, self.joueur.y - BSP.segment.y1))
@@ -105,18 +108,18 @@ class Rendu3D():
         if pv > 0:
             if ps_g >= 0 or ps_d >= 0:
                 self.calc_rendu3d(BSP.droite, indice, self.quads, self.lignes)
-            self.rendu_segment(BSP.segment, indice, BSP.segment.secteur[0], BSP.segment.secteur[1])
+            self.rendu_segment(BSP.segment, indice, BSP.segment.secteur_gauche.sol, BSP.segment.secteur_gauche.plaf)
             self.calc_rendu3d(BSP.gauche, indice, self.quads, self.lignes)
         
         elif pv < 0:
             if ps_g <= 0 or ps_d <= 0:
                 self.calc_rendu3d(BSP.gauche, indice, self.quads, self.lignes)
-            self.rendu_segment(BSP.segment, indice, BSP.segment.secteur[0], BSP.segment.secteur[1])
+            self.rendu_segment(BSP.segment, indice, BSP.segment.secteur_gauche.sol, BSP.segment.secteur_gauche.plaf)
             self.calc_rendu3d(BSP.droite, indice, self.quads, self.lignes)
 
         else:
             self.calc_rendu3d(BSP.gauche, indice, quads, self.lignes)
-            self.rendu_segment(BSP.segment, quads, indice, BSP.segment.secteur[0], BSP.segment.secteur[1])
+            self.rendu_segment(BSP.segment, quads, indice, BSP.segment.secteur_gauche.sol, BSP.segment.secteur_gauche.plaf)
             self.calc_rendu3d(BSP.droite, indice, quads, self.lignes)
 
     def tracer(self, dessin=1):
